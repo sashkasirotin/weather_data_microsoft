@@ -1,87 +1,64 @@
-//package com.weather.persistance;
-//
-//import com.weather.persistance.model.WeatherDataEntity;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.stereotype.Repository;
-//
-//import java.util.List;
-//
-//@Repository
-//public class WeatherDataRepository {
-//
-//    private final JdbcTemplate jdbcTemplate;
-//
-//    @Autowired
-//    public WeatherDataRepository(JdbcTemplate jdbcTemplate) {
-//        this.jdbcTemplate = jdbcTemplate;
-//    }
-//
-//    public void saveWeatherData(WeatherDataEntity weatherData) {
-//        String sql = """
-//            INSERT INTO weather_data (
-//                city, country, date, temp_max, temp_min, temp_avg, humidity,
-//                precip, precip_prob, wind_speed, wind_dir, pressure, cloud_cover,
-//                visibility, solar_radiation, uv_index, conditions, description, icon
-//            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-//            """;
-//
-//        jdbcTemplate.update(
-//                sql,
-//                weatherData.getCity(),
-//                weatherData.getCountry(),
-//                weatherData.getDate(),
-//                weatherData.getTempMax(),
-//                weatherData.getTempMin(),
-//                weatherData.getTempAvg(),
-//                weatherData.getHumidity(),
-//                weatherData.getPrecip(),
-//                weatherData.getPrecipProb(),
-//                weatherData.getWindSpeed(),
-//                weatherData.getWindDir(),
-//                weatherData.getPressure(),
-//                weatherData.getCloudCover(),
-//                weatherData.getVisibility(),
-//                weatherData.getSolarRadiation(),
-//                weatherData.getUvIndex(),
-//                weatherData.getConditions(),
-//                weatherData.getDescription(),
-//                weatherData.getIcon()
-//        );
-//    }
-//
-//    public List<WeatherDataEntity> findAll() {
-//        String sql = "SELECT * FROM weather_data";
-//        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-//            WeatherDataEntity entity = new WeatherDataEntity();
-//            entity.setId(rs.getLong("id"));
-//            entity.setCity(rs.getString("city"));
-//            entity.setCountry(rs.getString("country"));
-//            entity.setDate(rs.getDate("date").toLocalDate());
-//            entity.setTempMax(rs.getDouble("temp_max"));
-//            entity.setTempMin(rs.getDouble("temp_min"));
-//            entity.setTempAvg(rs.getDouble("temp_avg"));
-//            entity.setHumidity(rs.getDouble("humidity"));
-//            entity.setPrecip(rs.getDouble("precip"));
-//            entity.setPrecipProb(rs.getDouble("precip_prob"));
-//            entity.setWindSpeed(rs.getDouble("wind_speed"));
-//            entity.setWindDir(rs.getDouble("wind_dir"));
-//            entity.setPressure(rs.getDouble("pressure"));
-//            entity.setCloudCover(rs.getDouble("cloud_cover"));
-//            entity.setVisibility(rs.getDouble("visibility"));
-//            entity.setSolarRadiation(rs.getDouble("solar_radiation"));
-//            entity.setUvIndex(rs.getDouble("uv_index"));
-//            entity.setConditions(rs.getString("conditions"));
-//            entity.setDescription(rs.getString("description"));
-//            entity.setIcon(rs.getString("icon"));
-//            return entity;
-//        });
-//    }
-//
-//
-//
-//
-//
-//
-//}
-//
+package com.weather.persistance;
+
+import com.weather.gateway.services.models.WeatherResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+
+@Repository
+public class WeatherDataRepository {
+    @Autowired
+    public JdbcTemplate jdbcTemplate;
+
+
+
+    public void saveStations(Map<String, WeatherResponse.Station> stations) {
+        String sql = "MERGE INTO weather_stations AS target " +
+                "USING (SELECT ? AS id, ? AS name, ? AS latitude, ? AS longitude, ? AS quality) AS source " +
+                "ON target.id = source.id " +
+                "WHEN NOT MATCHED THEN " +
+                "INSERT (id, name, latitude, longitude, quality) " +
+                "VALUES (source.id, source.name, source.latitude, source.longitude, source.quality);";
+
+        for (WeatherResponse.Station station : stations.values()) {
+            jdbcTemplate.update(sql,
+                    station.getId(), station.getName(), station.getLatitude(),
+                    station.getLongitude(), station.getQuality()
+            );
+        }
+    }
+
+    public void saveWeatherData(String stationId, List<WeatherResponse.Day> days) {
+        String sql = "MERGE INTO weather_data AS target " +
+                "USING (SELECT ? AS station_id, ? AS datetime) AS source " +
+                "ON target.station_id = source.station_id AND target.datetime = source.datetime " +
+                "WHEN NOT MATCHED THEN " +
+                "INSERT (station_id, datetime, temp_max, temp_min, temp_avg, " +
+                "feels_like_max, feels_like_min, feels_like_avg, dew_point, humidity, " +
+                "precipitation, precip_prob, precip_type, wind_gust, wind_speed, wind_dir, " +
+                "pressure, cloud_cover, visibility, solar_radiation, solar_energy, uv_index, " +
+                "conditions, description) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+        for (WeatherResponse.Day day : days) {
+            jdbcTemplate.update(sql,
+                    stationId, day.getDatetime(),  // Source table for MERGE
+                    stationId, day.getDatetime(), day.getTempMax(), day.getTempMin(), day.getTemp(),
+                    day.getFeelsLikeMax(), day.getFeelsLikeMin(), day.getFeelsLike(), day.getDew(),
+                    day.getHumidity(), day.getPrecip(), day.getPrecipProb(),
+                    (day.getPrecipType() != null ? String.join(",", day.getPrecipType()) : null),
+                    day.getWindGust(), day.getWindSpeed(), day.getWindDir(), day.getPressure(),
+                    day.getCloudCover(), day.getVisibility(), day.getSolarRadiation(),
+                    day.getSolarEnergy(), day.getUvIndex(), day.getConditions(), day.getDescription()
+            );
+        }
+    }
+
+
+
+
+}
+
