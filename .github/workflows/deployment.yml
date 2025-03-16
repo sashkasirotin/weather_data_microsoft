@@ -1,50 +1,54 @@
-# This workflow automates building a Java project with Maven,
-# pushing the Docker image to Azure Container Registry (ACR), 
-# and deploying it to Azure Kubernetes Service (AKS) using Helm.
+# GitHub Actions workflow for building, pushing a Docker image to ACR, 
+# and deploying it to AKS using Helm.
 
 name: Deployment
 
-# Trigger this workflow on push to the master branch or pull requests targeting master
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
 
+# Global environment variables
 env:
-  IMAGE_NAME: weather-app  # Name of the Docker image
+  IMAGE_NAME: weather-app  # Docker image name
   ACR_SERVER: ${{ secrets.ACR_NAME }}.azurecr.io  # ACR server URL
   RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}  # Azure resource group name
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}  # AKS cluster name
 
+permissions:
+  id-token: write   # Required for OIDC authentication with Azure
+  contents: read    # Required for repository checkout
+
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest  # Specifies the latest Ubuntu runner
-    
+    runs-on: ubuntu-latest  # Uses the latest Ubuntu runner
+
     steps:
-      # Step 1: Checkout Code from the Repository
+      # Step 1: Checkout Code
       - name: Checkout Repository
-        uses: actions/checkout@v4  # This step fetches the latest code from the repo
+        uses: actions/checkout@v4
 
-      # Step 2: Set up JDK 17 to build the Java project
+      # Step 2: Set up JDK 17 for Maven
       - name: Set up JDK 17
-        uses: actions/setup-java@v4  # Action to configure Java
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'  # Uses Java 17
-          distribution: 'temurin'  # Temurin JDK distribution
-          cache: maven  # Cache Maven dependencies for faster builds
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven  # Caches Maven dependencies
 
-      # Step 3: Build the Java project using Maven
+      # Step 3: Build the Java project with Maven
       - name: Build with Maven
-        run: mvn -B package --file pom.xml  # Packages the project into a JAR file
+        run: mvn -B package --file pom.xml
 
-      # Step 4: Log in to Azure using GitHub Secrets
+      # Step 4: Log in to Azure using OIDC
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}  # Service Principal Client ID
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}  # Azure Tenant ID
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # Azure Subscription ID
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: false
 
       # Step 5: Log in to Azure Container Registry (ACR)
       - name: Log in to ACR
@@ -53,10 +57,10 @@ jobs:
       # Step 6: Build and Push Docker Image to ACR
       - name: Build and Push Docker Image
         run: |
-          docker build -t $ACR_SERVER/$IMAGE_NAME:${{ github.sha }} .  # Build image with commit SHA tag
+          docker build -t $ACR_SERVER/$IMAGE_NAME:${{ github.sha }} .  # Tag image with commit SHA
           docker push $ACR_SERVER/$IMAGE_NAME:${{ github.sha }}  # Push image to ACR
 
-      # Step 7: Get AKS Credentials to interact with the AKS cluster
+      # Step 7: Get AKS Credentials
       - name: Get AKS Credentials
         run: az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
 
