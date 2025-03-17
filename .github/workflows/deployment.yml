@@ -62,7 +62,7 @@ jobs:
       # Step 8: Deploy to AKS with Helm
       - name: Deploy to AKS with Helm
         run: |
-          helm upgrade --install weather-app helm/weather-app \
+          helm upgrade --install weather-app ./weather-app \
             --set image.repository=$ACR_SERVER/$IMAGE_NAME \
             --set image.tag=${{ github.sha }} \
             --set image.pullPolicy=Always
