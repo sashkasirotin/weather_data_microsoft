@@ -37,8 +37,6 @@ jobs:
         run: mvn -B package --file pom.xml
 
       # Step 4: Log in to Azure using Service Principal credentials
-      - name: Set up Azure CLI
-        uses: azure/setup-azurecli@v1
       - name: Log in to Azure
         uses: azure/login@v1
         with:
