@@ -38,4 +38,4 @@ spec://spec.rules[0].http.paths[0].backend: Required value:
                   number: { { .backend.service.port.number } }
           { { - end } }
     { { - end } }
-    { { - end } }
+{ { - end } }
