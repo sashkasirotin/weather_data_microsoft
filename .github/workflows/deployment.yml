@@ -13,7 +13,6 @@ env:
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}  # AKS cluster name
 
 permissions:
-  id-token: write   # Required for OIDC authentication with Azure (not needed in this case)
   contents: read    # Required for repository checkout
 
 jobs:
@@ -37,7 +36,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      # Step 4: Log in to Azure using Service Principal credentials (client ID, client secret)
+      # Step 4: Log in to Azure using Service Principal credentials
       - name: Log in to Azure
         uses: azure/login@v1
         with:
@@ -46,7 +45,6 @@ jobs:
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           allow-no-subscriptions: false
-          auth-type: "ServicePrincipal"  # Explicitly using Service Principal (not OIDC)
 
       # Step 5: Log in to ACR
       - name: Log in to ACR
