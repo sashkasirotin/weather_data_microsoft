@@ -9,7 +9,7 @@ metadata:
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-spec://spec.rules[0].http.paths[0].backend: Required value:
+spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
