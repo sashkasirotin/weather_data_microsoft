@@ -37,7 +37,7 @@ spec:
               service:
                 name: {{ include "weather-app.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ .Values.service.ports[0].port }}  # Reference port dynamically
           {{- end }}
     {{- end }}
-{{- end }}
+  {{- end }}

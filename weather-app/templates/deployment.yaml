@@ -7,6 +7,8 @@ metadata:
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- else }}
+  replicas: 1  # In case autoscaling is enabled, we'll handle scaling externally
   {{- end }}
   selector:
     matchLabels:
@@ -19,9 +21,9 @@ spec:
       {{- end }}
       labels:
         {{- include "weather-app.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+          {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -42,7 +44,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.ports[0].targetPort }}  # Use targetPort from values.yaml
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
