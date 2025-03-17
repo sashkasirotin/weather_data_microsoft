@@ -1,1 +1,1 @@
-this is my weather -app on azure kuberneties cluster
+this is my weather -app on azure kuberneties cluster alex
