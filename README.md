@@ -51,10 +51,10 @@ az aks get-credentials --resource-group WeatherAppGroup --name WeatherAppCluster
 
 5. AZURE CONTAINER REGISTRY (ACR)
 # Create ACR
-az acr create --resource-group WeatherAppGroup --name weatherappregistryalex --sku Basic
+az acr create --resource-group WeatherAppGroup --name weatheralexacr --sku Basic
 
 # Login to ACR
-az acr login --name weatherappregistryalex
+az acr login --name weatheralexacr
 
 6. LINUX VM SETUP FOR DOCKER/KUBERNETES
 # Create Ubuntu VM
@@ -69,17 +69,17 @@ sudo usermod -aG docker $USER && newgrp docker
 7. DOCKER IMAGE MANAGEMENT
 # Build and tag image
 docker build -t weather-app:v1 .
-docker tag weather-app:v1 weatherappregistryalex.azurecr.io/weather-app:v1
+docker tag weather-app:v1 weatheralexacr.azurecr.io/weather-app:v1
 
 # Push to ACR
-docker push weatherappregistryalex.azurecr.io/weather-app:v1
+docker push weatheralexacr.azurecr.io/weather-app:v1
 
 8. KUBERNETES DEPLOYMENT
 # Create Helm chart
 helm create weather-app
 
 # Deploy to AKS
-helm upgrade --install weather-app ./weather-app --set image.repository=weatherappregistryalex.azurecr.io/weather-app --set image.tag=latest
+helm upgrade --install weather-app ./weather-app --set image.repository=weatheralexacr.azurecr.io/weather-app --set image.tag=latest
 
 # Verify deployment
 kubectl get pods
@@ -110,7 +110,7 @@ az ad sp create-for-rbac --name "WeatherAppServicePrincipal"
 
 # Assign roles
 az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
-az role assignment create --assignee <service-principal-id> --role AcrPush --scope /subscriptions/<subscription-id>/resourceGroups/WeatherAppGroup/providers/Microsoft.ContainerRegistry/registries/weatherappregistryalex
+az role assignment create --assignee <service-principal-id> --role AcrPush --scope /subscriptions/<subscription-id>/resourceGroups/WeatherAppGroup/providers/Microsoft.ContainerRegistry/registries/weatheralexacr
 
 12. CI/CD PIPELINE (EXAMPLE)
 # ARM Template deployment
@@ -121,7 +121,7 @@ VERIFICATION COMMANDS
 kubectl get nodes
 
 # Check ACR images
-az acr repository list --name weatherappregistryalex
+az acr repository list --name weatheralexacr
 
 # Check SQL Server status
 az sql server show --name weatherdata-sql-server --resource-group WeatherResourceGroup
