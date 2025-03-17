@@ -39,7 +39,6 @@ ingress:
         - path: /
           pathType: Prefix
           backend:
-            service:
               serviceName: weather-app
               servicePort: 80
 
