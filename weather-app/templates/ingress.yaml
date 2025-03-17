@@ -5,11 +5,11 @@ metadata:
   name: {{ include "weather-app.fullname" . }}
   labels:
     {{- include "weather-app.labels" . | nindent 4 }}
-    {{- with .Values.ingress.annotations }}
+  {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
-    {{- end }}
-spec:
+  {{- end }}
+spec://spec.rules[0].http.paths[0].backend: Required value:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
@@ -24,20 +24,18 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    { { - range .Values.ingress.hosts } }
+    - host: { { .host | quote } }
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
+          { { - range .paths } }
+          - path: { { .path } }
+            pathType: { { .pathType } }
             backend:
               service:
-                name: {{ include "weather-app.fullname" $ }}
+                name: { { .backend.service.name } }
                 port:
-                  number: {{ $.Values.service.ports.port }}
-          {{- end }}
-    {{- end }}
-  {{- end }}
+                  number: { { .backend.service.port.number } }
+          { { - end } }
+    { { - end } }
+    { { - end } }

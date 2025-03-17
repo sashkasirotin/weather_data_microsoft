@@ -7,10 +7,13 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.ports.port }}
-      targetPort: {{ .Values.service.ports.targetPort }}
-      protocol: TCP
-      name: http
-      nodePort: {{ .Values.service.ports.nodePort }}
+    { { - range .Values.service.ports } }
+    - name: { { .name } }
+      protocol: { { .protocol } }
+      port: { { .port } }
+      targetPort: { { .targetPort } }
+      nodePort: { { .nodePort } }
+      { { - end } }
+    { { - end } }
   selector:
     {{- include "weather-app.selectorLabels" . | nindent 4 }}
