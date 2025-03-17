@@ -40,9 +40,8 @@ ingress:
           pathType: Prefix
           backend:
             service:
-              name: weather-app
-              port:
-                number: 80
+              serviceName: weather-app
+              servicePort: 80
 
 resources:
   limits:

@@ -24,18 +24,18 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    { { - range .Values.ingress.hosts } }
-    - host: { { .host | quote } }
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
       http:
         paths:
-          { { - range .paths } }
-          - path: { { .path } }
-            pathType: { { .pathType } }
+          {{- range .paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
-                name: { { .backend.service.name } }
+                name: {{ .backend.serviceName | quote }}
                 port:
-                  number: { { .backend.service.port.number } }
-          { { - end } }
-    { { - end } }
-{ { - end } }
+                  number: {{ .backend.servicePort }}
+          {{- end }}
+    {{- end }}
+  {{- end }}
