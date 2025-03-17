@@ -49,23 +49,3 @@ resources:
   requests:
     cpu: "250m"
     memory: "128Mi"
-
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 3
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /ready
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
