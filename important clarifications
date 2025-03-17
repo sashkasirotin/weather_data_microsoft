@@ -1,0 +1,82 @@
+Clarifications apologies and key points to do :
+
+I would really like to implement thouse next story points if i could but due to time ,
+my system limitations(2015 old os mac),and also azure free triel limitations.
+so here is some key points that i think are missing 
+
+
+*refactor to modules -it was prctically done and add to aside branck to avoif breaking the app at the last moment 
+
+*add logging - i fi had more time even a day i would totallu add info and debig level logs
+
+*add authorization token to rest-i know it could be done from azure also didnt have the time to do without breaking 
+
+* create correct arm template- poseble to create but before submittion was not a goodtime 
+
+* junits- to keep backword competabilety
+
+* could of created a jason of secrets instead creating each secret seperatly
+
+* add error handling and error propogation from getway call,and structured response entity
+
+* add missing functionality for min max- even thow it is part of the response and could be fetched from it simply if needed
+
+*create some azure ui representation of db maybe in grafana -didnt have a time to look at dept
+
+*add validation the the weather max 30 days -local date minus days(30)
+
+*add validation if the city name is correct
+
+* add reading from db public 
+      List<Map<String, Object>> getWeatherByLocationAndDate(String stationId, LocalDate date) {
+            return jdbcTemplate.queryForList(
+            "SELECT * FROM weather_data WHERE station_id = ? AND datetime = ?", 
+            stationId, date
+            );
+          }
+      public List<Map<String, Object>> getHistoricalWeather(String stationId, LocalDate startDate, LocalDate endDate) {
+          return jdbcTemplate.queryForList(
+          "SELECT * FROM weather_data WHERE station_id = ? AND datetime BETWEEN ? AND ?", 
+           stationId, startDate, endDate
+          );
+       } 
+
+*maybe even create some web app at base 44 app with the next prompt witch i tried :"
+Create a responsive web application that enables users to:
+
+Select a City: Provide a dropdown menu with the following city options:
+
+Jerusalem Tel Aviv Haifa Eilat Choose Data Type:
+
+A toggle or radio buttons to select between: "Today's Weather" "Historical Weather Data" For "Today's Weather":
+
+Upon selection, the application should send a GET request to: ruby Copy Edit http://20.217.218.171/weather/fetch/today?location={selected_city} Display the returned weather data in a user-friendly format. For "Historical Weather Data":
+
+Provide date pickers for users to select a start date and an end date. Upon selection, the application should send a GET request to: ruby Copy Edit http://20.217.218.171/weather/fetch/history?location={selected_city}&startDate={start_date}&endDate={end_date} Visualize the historical data using interactive graphs or charts. Data Visualization:
+
+Integrate data visualization tools to represent weather data effectively. Options include: Graphana Chart.js D3.js User Interface:
+
+Design a clean and intuitive interface with: A header titled "Weather Data Viewer" Sections for city selection, data type selection, date range input (if applicable), and data visualization. Error Handling:
+
+Implement notifications or alerts for scenarios such as: Invalid date ranges Network errors No data available for the selected parameters Technologies:
+
+Utilize modern web development frameworks and libraries to ensure responsiveness and interactivity. Ensure the application is user-friendly, responsive, and provides clear visual representations of the weather data based on user selections."
+
+
+* add reading from db public 
+      List<Map<String, Object>> getWeatherByLocationAndDate(String stationId, LocalDate date) {
+            return jdbcTemplate.queryForList(
+            "SELECT * FROM weather_data WHERE station_id = ? AND datetime = ?", 
+            stationId, date
+            );
+          }
+      public List<Map<String, Object>> getHistoricalWeather(String stationId, LocalDate startDate, LocalDate endDate) {
+          return jdbcTemplate.queryForList(
+          "SELECT * FROM weather_data WHERE station_id = ? AND datetime BETWEEN ? AND ?", 
+           stationId, startDate, endDate
+          );
+       } 
+
+
+
+------------------------------mainly i want to say thank you for the oretunety it was a great expireince for me like boot cam on steroids--------      
