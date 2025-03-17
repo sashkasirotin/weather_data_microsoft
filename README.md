@@ -1,7 +1,17 @@
-weather app
-- a java-spring boot app the has 2 api rest endpoints deployed using a ci-cd pipline of git actions witch is pushing every commit to master to the azure clude aks cluster ,and uses acr and azure sql db and sql server to store and fetch the weather data.
+**weather app**
+**description:**
+a java-spring boot app the has 2 api rest endpoints deployed using a ci-cd pipline of git actions witch is pushing every commit to master to the azure clude aks cluster ,and uses acr and azure sql db and sql server to store and fetch the weather data.
 
-AZURE SETUP GUIDE
+**my endpoins from postman by azure public ip:20.217.218.171 using this resource group MC_WeatherAppGroup_WeatherAppCluster_israelcentral**
+
+**examples:
+today weather
+curl --location 'http://20.217.218.171/weather/fetch/today?location=tel-aviv'
+hystory weather by dates
+curl --location 'http://20.217.218.171/weather/fetch/history?location=jerusalem&startDate=2025-02-12&endDate=2025-03-12'**
+
+
+**AZURE SETUP GUIDE**
 
 1. AZURE ACCOUNT LOGIN
 az login
