@@ -7,8 +7,6 @@ metadata:
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- else }}
-  replicas: 1  # In case autoscaling is enabled, we'll handle scaling externally
   {{- end }}
   selector:
     matchLabels:
@@ -44,7 +42,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.ports[0].targetPort }}  # Use targetPort from values.yaml
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:
