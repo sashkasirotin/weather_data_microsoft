@@ -13,6 +13,7 @@ env:
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}  # AKS cluster name
 
 permissions:
+  id-token: write   # Allows GitHub to request the ID token
   contents: read    # Required for repository checkout
 
 jobs:
