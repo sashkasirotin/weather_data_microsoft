@@ -1,4 +1,4 @@
-package com.weather.weatherData;
+package com.weather.exe;
 
 
 import org.springframework.boot.SpringApplication;
@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
-//@RestController
 @ComponentScan(basePackages = {
 		"com.weather.weatherData"
 })

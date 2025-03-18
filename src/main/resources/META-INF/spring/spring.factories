@@ -1,1 +1,6 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.weather.weatherData.config.ApplicationServiceConfig
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.weather.gateway.config.ApplicationServiceGatewayConfig,\
+com.weather.persistence.config.PersistenceConfig,\
+com/weather/services/config/ApplicationServiceConfig
+
+

@@ -1,6 +1,7 @@
-package com.weather.persistance;
+package com.weather.persistence.services.implementations;
 
 import com.weather.gateway.services.models.WeatherResponse;
+import com.weather.persistence.services.interfaces.IWeatherDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -9,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class WeatherDataRepository {
+public class WeatherDataRepository implements IWeatherDataRepository {
     @Autowired
     public JdbcTemplate jdbcTemplate;
 
 
-
+    @Override
     public void saveStations(Map<String, WeatherResponse.Station> stations) {
         String sql = "MERGE INTO weather_stations AS target " +
                 "USING (SELECT ? AS id, ? AS name, ? AS latitude, ? AS longitude, ? AS quality) AS source " +
@@ -30,7 +31,7 @@ public class WeatherDataRepository {
             );
         }
     }
-
+    @Override
     public void saveWeatherData(String stationId, List<WeatherResponse.Day> days) {
         String sql = "MERGE INTO weather_data AS target " +
                 "USING (SELECT ? AS station_id, ? AS datetime) AS source " +

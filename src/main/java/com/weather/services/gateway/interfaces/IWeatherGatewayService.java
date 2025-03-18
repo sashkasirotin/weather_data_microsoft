@@ -1,4 +1,4 @@
-package com.weather.weatherData.gateway.interfaces;
+package com.weather.services.gateway.interfaces;
 
 import com.weather.gateway.services.models.WeatherResponse;
 

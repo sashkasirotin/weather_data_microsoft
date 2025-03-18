@@ -1,12 +1,12 @@
 package com.weather.gateway.services.delegate.implementation;
-import com.weather.gateway.services.models.WeatherResponse;
+import com.weather.gateway.services.delegate.interfaces.IWeatherGatewayClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
     @Service
-    public class WeatherGatewayClient {
+    public class WeatherGatewayClient implements IWeatherGatewayClient {
 
         @Value("${weather.api.key}")
         private String apiKey;
@@ -20,25 +20,13 @@ import org.springframework.web.client.RestTemplate;
         @Autowired
         private RestTemplate restTemplate;
 
-//        public WeatherResponse getWeatherData(String city) {
-//            String url = apiUrl + "?q=" + city + "&appid=" + apiKey +"&unitGroup="+
-//                    unitGroup+"&contentType="+contentType;
-//            return restTemplate.getForObject(url, WeatherResponse.class);
-//        }
-//        public WeatherResponse getThirtyDayOldWeatherData(String city,String dateRange) {
-//            String url = apiUrl + "?q=" + city + "&appid=" + apiKey +"&unitGroup="+
-//                    unitGroup+"&contentType="+contentType;
-//            return restTemplate.getForObject(url, WeatherResponse.class);
-//        }
-
-
-
+        @Override
         public String getWeatherData(String location, String startDate, String endDate) {
             String url = apiUrl + "/timeline/" + location + "/" + startDate + "/" + endDate + "?key=" + apiKey + "&unitGroup="+ unitGroup+"&contentType="+contentType+"&include=days";
             System.out.println(url);
             return restTemplate.getForObject(url, String.class);
         }
-
+        @Override
         public String getWeatherData(String location) {
             String url = apiUrl + "/timeline/" + location+"/today" + "?key=" + apiKey + "&unitGroup="+ unitGroup+"&contentType="+contentType+"&include=days";
             System.out.println(url);
