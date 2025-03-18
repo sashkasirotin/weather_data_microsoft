@@ -4,6 +4,7 @@ I would really like to implement thouse next story points if i could but due to 
 my system limitations(2015 old os mac),and also azure free triel limitations.
 so here is some key points that i think are missing 
 
+*open Api Documentaion-add related annotaions 
 
 *refactor to modules -it was prctically done and add to aside branck to avoif breaking the app at the last moment 
 
